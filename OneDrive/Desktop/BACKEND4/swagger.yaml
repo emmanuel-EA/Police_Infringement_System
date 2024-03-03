@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  title: Police Infringement System API
+  description: An API for a police infringement system that allows police officers to login and input vehicle registration or owner name to view and create infringements
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /login:
+    post:
+      summary: Login a police officer
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                badgeNumber:
+                  type: string
+                  description: The police officer's badge number
+                password:
+                  type: string
+                  description: The police officer's password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The JWT token for the police officer
+        '401':
+          description: Invalid badge number or password
+  /vehicle:
+    get:
+      summary: Get vehicle details by registration
+      operationId: getVehicleDetails
+      parameters:
+        - name: registration
+          in: query
+          description: The vehicle registration number
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleDetails'
+        '404':
+          description: Vehicle not found
+  /owner:
+    get:
+      summary: Get owner details by name
+      operationId: getOwnerDetails
+      parameters:
+        - name: name
+          in: query
+          description: The owner's name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerDetails'
+        '404':
+          description: Owner not found
+  /infringement:
+    post:
+      summary: Create a new infringement
+      operationId: createInfringement
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfringementRequest'
+      responses:
+        '201':
+          description: Infringement created
+        '401':
+          description: Unauthorized
+components:
+  schemas:
+    VehicleDetails:
+      type: object
+      properties:
+        registration:
+          type: string
+          description: The vehicle registration number
+        make:
+          type: string
+          description: The vehicle make
+        model:
+          type: string
+          description: The vehicle model
+        year:
+          type: integer
+          description: The vehicle year of manufacture
+        colour:
+          type: string
+          description: The vehicle colour
+        licenseExpiry:
+          type: string
+          description: The vehicle license expiry date
+        owner:
+          $ref: '#/components/schemas/OwnerDetails'
+        infringements:
+          type: array
+          items:
+            $ref: '#/components/schemas/InfringementDetails'
+    OwnerDetails:
+      type: object
+      properties:
+        personId:
+          type: integer
+          description: The owner's person ID
+        name:
+          type: string
+          description: The owner's name
+        address:
+          type: string
+          description: The owner's address
+        drivingLicenseNumber:
+          type: string
+          description: The owner's driving license number
+        plateNumbers:
+          type: array
+          items:
+            type: string
+          description: The plate numbers for the vehicles owned by the owner
+        drivingHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/DrivingRecordDetails'
+    InfringementDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The infringement ID
+        officerBadgeNumber:
+          type: string
+          description: The officer's badge number
+        ownerName:
+          type: string
+          description: The owner's name
+        registration:
+          type: string
+          description: The vehicle registration number
+        date:
+          type: string
+          description: The infringement date
+        offense:
+          type: string
+          description: The infringement offense
+        pointsDeducted:
+          type: integer
+          description: The points deducted for the infringement
+        comments:
+          type: string
+          description: The infringement comments
+    InfringementRequest:
+      type: object
+      properties:
+        officerBadgeNumber:
+          type: string
+          description: The officer's badge number
+        ownerName:
+          type: string
+          description: The owner's name
+        registration:
+          type: string
+          description: The vehicle registration number
+        date:
+          type: string
+          description: The infringement date
+        offense:
+          type: string
+          description: The infringement offense
+        pointsDeducted:
+          type: integer
+          description: The points deducted for the infringement
+        comments:
+          type: string
+          description: The infringement comments
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
