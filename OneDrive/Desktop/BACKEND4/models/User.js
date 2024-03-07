@@ -1,23 +1,22 @@
-const bcrypt = require('bcrypt');
-const sequelize = require('../config/database.js')
+const { DataTypes } = require('sequelize');
+const db = require('../config/database');
 
-module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
-        badgeNumber: {
-            type: DataTypes.STRING,
-            unique: true,
-            allowNull: false,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-    });
 
-    User.beforeCreate(async (user) => {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
-    });
+const User = db.Sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    badgeNumber: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+});
 
-    return User;
-};
+module.exports = User;

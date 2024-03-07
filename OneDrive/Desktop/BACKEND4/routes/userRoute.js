@@ -1,23 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
-const jwt = require('jsonwebtoken');
 
-router.post("/auth/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
+    const { badgeNumber, password } = req.body;
     try {
-        const user = await userController.getUserByBadgeNumber(req.body.badgenumber);
-        if (user && (await bcrypt.compare(req.body.password, user.password))) {
-            // Passwords match - create token
-            const token = jwt.sign({ userId: user.id }, process.env.JWT_KEY, {
-                expiresIn: '1h',
-            });
-            const data = { token: token, user: user }
-            res.send({ result: 200, data: data });
-        } else {
-            res.status(404).json({ result: 404, message: "User not found" });
+        const user = await userController.getUserByBadgeNumber(badgeNumber);
+        if (user) {
+            if (password === user.password) {
+                return res.status(200).json({ result: "Login Successful", user });
+            } else {
+                return res.status(401).json({ result: "Invalid credentials" });
+            }
         }
-    } catch (err) {
-        next(err);
+        else {
+            return res.status(404).json({ result: "No User Found" });
+        }
+
+    } catch (error) {
+        next(error);
     }
 });
 

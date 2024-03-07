@@ -1,4 +1,4 @@
-const DrivingRecord = require('../models/drivingRecord');
+const DrivingRecord = require('../models/DrivingRecord');
 
 // Controller function to get driving record details by ID
 exports.getDrivingRecordDetails = async (req, res) => {

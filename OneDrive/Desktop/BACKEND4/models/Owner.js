@@ -1,5 +1,14 @@
-module.exports = (DataTypes, sequelize) => {
-    const Owner = sequelize.define('Owner', {
+const { DataTypes } = require('sequelize');
+const db = require('../config/database');
+
+const Owner = db.Sequelize.define(
+    "Owner",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
         FirstName: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -7,6 +16,10 @@ module.exports = (DataTypes, sequelize) => {
         LastName: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        ownerid: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
         },
         LicenseNumber: {
             type: DataTypes.STRING,
@@ -27,12 +40,12 @@ module.exports = (DataTypes, sequelize) => {
         DemeritPoints: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-        DrivingRecords: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-        },
-    });
+        }
+    },
+    {
+        // Other model options go here
+        tableName: 'Owner'
+    }
+);
 
-    return Owner;
-};
+module.exports = Owner;

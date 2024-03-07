@@ -1,19 +1,11 @@
 const User = require("../models/User");
+const bcrypt = require('bcrypt');
 
-
-const getUser = async (id) => {
-    const data = await User.findOne({ where: { id: id }, raw: true });
-    return data;
+const getUserByBadgeNumber = async (badgeNumber) => {
+    const user = await User.findOne({ where: { BadgeNumber: badgeNumber } });
+    return user;
 };
-
-const getUserByBadgeNumber = async (badgenumber) => {
-    const data = await User.findOne({ where: { badgeNumber: badgenumber }, raw: true });
-    return data;
-};
-
 
 module.exports = {
-    getUser,
     getUserByBadgeNumber,
-
 };

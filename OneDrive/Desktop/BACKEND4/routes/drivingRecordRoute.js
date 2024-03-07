@@ -4,6 +4,6 @@ const drivingRecordController = require('../controllers/drivingRecordController.
 const authMiddleware = require('../auth/authMiddleware.js');
 
 // Define route for fetching driving record details
-router.get('/drivingRecord', drivingRecordController.getDrivingRecordDetails);
+router.get('/get', drivingRecordController.getDrivingRecordDetails);
 
 module.exports = router;

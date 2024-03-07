@@ -1,18 +1,25 @@
 const { DataTypes } = require('sequelize');
+const db = require('../config/database');
 
-module.exports = (sequelize) => {
-    const Infringement = sequelize.define('Infringement', {
-        badgeNumber: {
-            type: DataTypes.STRING,
-            allowNull: false,
+const Infringement = db.Sequelize.define(
+    "Infringement",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
-        ownerName: {
+        badgeNumber: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         plateNumber: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        ownerid: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
         },
         date: {
             type: DataTypes.DATEONLY,
@@ -30,7 +37,11 @@ module.exports = (sequelize) => {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-    });
+    },
+    {
+        // Other model options go here
+        tableName: 'Infringement'
+    }
+);
 
-    return Infringement;
-};
+module.exports = Infringement;

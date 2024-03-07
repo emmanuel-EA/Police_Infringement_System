@@ -1,33 +1,24 @@
-const Vehicle = require('../models/vehicle');
+const Vehicle = require('../models/Vehicle');
 const User = require('../models/User');
-const Infringement = require('../models/infringement');
+const Infringement = require('../models/Infringement');
 
 exports.createInfringement = async (req, res) => {
-    const { plateNumber, badgeNumber, date, offence } = req.body;
+    const { id, badgeNumber, plateNumber, ownerid, date, pointsDeducted, offense, comments, createdAt, updatedAt } = req.body;
 
     try {
-        const vehicle = await Vehicle.findOne({ where: { plateNumber } });
-
-        if (!vehicle) {
-            return res.status(404).json({ message: 'Vehicle not found' });
-        }
-
-        const officerExists = await User.findOne({ where: { badgeNumber } });
-
-        if (!officerExists) {
-            return res.status(404).json({ message: 'Officer not found' });
-        }
-
         const infringement = await Infringement.create({
+            id,
             badgeNumber,
-            ownerName,
             plateNumber,
+            ownerid,
             date,
-            offence,
+            offense,
             pointsDeducted,
             comments,
+            createdAt,
+            updatedAt,
 
-        }, { include: [User] });
+        });
 
         res.json({ message: 'Infringement created successfully', infringement });
     } catch (error) {

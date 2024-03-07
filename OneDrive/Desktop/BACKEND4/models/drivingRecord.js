@@ -1,14 +1,21 @@
 const { DataTypes } = require('sequelize');
+const db = require('../config/database');
 
-module.exports = (sequelize) => {
-    const DrivingRecord = sequelize.define('DrivingRecord', {
-        offense: {
-            type: DataTypes.STRING,
-            allowNull: false,
+const DrivingRecord = db.Sequelize.define(
+    "DrivingRecord",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
         dateOfOffense: {
             type: DataTypes.DATEONLY,
             allowNull: false,
+        },
+        ownerid: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
         },
         pointsDeducted: {
             type: DataTypes.INTEGER,
@@ -18,7 +25,11 @@ module.exports = (sequelize) => {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-    });
+    },
+    {
+        // Other model options go here
+        tableName: 'DrivingRecord'
+    }
+);
 
-    return DrivingRecord;
-};
+module.exports = DrivingRecord;

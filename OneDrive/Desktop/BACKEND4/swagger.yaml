@@ -4,7 +4,7 @@ info:
   description: An API for a police infringement system that allows police officers to login and input vehicle registration or owner name to view and create infringements
   version: 1.0.0
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:3000/api/user
 paths:
   /login:
     post:
