@@ -1,33 +1,56 @@
 import axios from 'axios';
-import { useState } from 'react'
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SearchPage = () => {
     const [searchInput, setSearchInput] = useState('');
     const [searchType, setSearchType] = useState('plateNumber'); // 'plateNumber' or 'ownerName'
-    const [searchResults, setSearchResults] = useState(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSearch = async (e) => {
         e.preventDefault();
         setError('');
-        setSearchResults(null);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('/api/search', { searchInput, searchType }, {
+            let requestBody;
+            if (searchType === 'plateNumber') {
+                requestBody = { plateNumber: searchInput };
+            } else if (searchType === 'ownerName') {
+                const [firstName, lastName] = searchInput.split(' ');
+                requestBody = { FirstName: firstName, LastName: lastName };
+            }
+
+            const url = searchType === 'plateNumber' ? 'http://localhost:3000/api/vehicle/search' : 'http://localhost:3000/api/owner/details';
+            const response = await axios.post(url, requestBody, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    'Content-Type': 'application/json',
                 }
             });
-            setSearchResults(response.data);
+
+            if (response.data.vehicle) {
+                navigate('/Vehicle', { state: { vehicle: response.data.vehicle } });
+            } else if (response.data.owner) {
+                navigate('/Owner', { state: { owner: response.data.owner } });
+            } else {
+                setError('No vehicle or owner found with the provided information.');
+            }
         } catch (err) {
-            setError(err.response?.data?.message || 'An error occurred during the search.');
+            setError(err.response?.data?.message || 'Please Input using the correct Format');
         }
     };
 
     return (
-        <div className='d-flex justify-content-center align-items-center bg-primary vh-100'>
+        <div style={{
+            backgroundImage: `url('./police2.jpeg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '100vh', // Adjust as needed
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'bg-primary', // Ensure text is readable against the background
+        }}>
             <div className='bg-white p-3 rounded w-25'>
                 <h2>Search for Vehicle or Owner</h2>
                 <form onSubmit={handleSearch}>
@@ -64,15 +87,9 @@ const SearchPage = () => {
                     <button type="submit" className='btn btn-success w-100'>Search</button>
                 </form>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-                {searchResults && (
-                    <div>
-                        {/* Display search results here */}
-                        <pre>{JSON.stringify(searchResults, null, 2)}</pre>
-                    </div>
-                )}
             </div>
         </div>
     );
 };
 
-export default SearchPage
+export default SearchPage;

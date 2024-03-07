@@ -1,29 +1,41 @@
-import axios from 'axios'
-import { useState } from 'react'
+import axios from 'axios';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const login = () => {
+function Login() {
     const [badgeNumber, setBadgeNumber] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handlelogin = async (e) => {
-        e.preventDefault();
-        setError('');
-
-        try {
-            const response = await axios.post('http://localhost:3000/api/user', { badgeNumber, password });
-            // Handle successful login (e.g., store token)
-        } catch (err) {
-            setError(err.response?.data?.message || 'An error occurred during login.');
-        }
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios.post('http://localhost:3000/api/user/login', { badgeNumber, password })
+            .then(res => {
+                console.log(res);
+                navigate('/Search');
+            })
+            .catch(err => {
+                console.log(err);
+                setError(err.response?.data?.message || 'User not Found. Authorized Users Only');
+            });
     };
 
     return (
-        <div className='d-flex justify-content-center align-items-center bg-primary vh-100'>
+        <div style={{
+            backgroundImage: `url('./police1.jpeg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '100vh', // Adjust as needed
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'bg-primary', // Ensure text is readable against the background
+        }}>
             <div className='bg-white p-3 rounded w-25'>
                 <h2>Sign-In</h2>
-                <form onSubmit={handlelogin}>
-                    <div clasName='mb-3'>
+                <form onSubmit={handleSubmit}>
+                    <div className='mb-3'>
                         <label htmlFor="badgeNumber" ><strong>Badge Number</strong></label>
                         <input
                             type="text"
@@ -50,7 +62,7 @@ const login = () => {
                 </form>
             </div>
         </div>
-    )
-};
+    );
+}
 
-export default login;
+export default Login;
